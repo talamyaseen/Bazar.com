@@ -48,7 +48,7 @@ app.get('/purchase/:item_number', (req, res) => {
 
             if(responseData.stock>=0){
                 //const dec = responseData.stock -1;
-                app.put('/update/:item_number/', (req, res) => {
+                app.put('/update/:item_number', (req, res) => {
                     console.log("sucsess");
                 });
             }
