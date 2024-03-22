@@ -17,7 +17,7 @@ db.run(ordersql, (err) => {
     }
 });
 
-app.get('/purchase/:item_number', (req, res) => {
+app.post('/purchase/:item_number', (req, res) => {
     const itemNumber = parseInt(req.params.item_number); 
     const insertQuery = `INSERT INTO "order" (item_number) VALUES (?)`;
     db.run(insertQuery, [itemNumber], (err) => {
@@ -41,14 +41,14 @@ app.get('/purchase/:item_number', (req, res) => {
     });
 
 
-    http.get('http://localhost:4000/info/'+req.params.item_number,(response)=>{
+    http.put('http://localhost:4000/info/'+req.params.item_number,(response)=>{
         response.on("data", (chunk)=>{
             const responseData = JSON.parse(chunk);
             res.json(responseData)
 
             if(responseData.stock>=0){
                 //const dec = responseData.stock -1;
-                app.put('/update/:item_number', (req, res) => {
+                http.put('http://localhost:4000/update/'+req.params.item_number, (req, res) => {
                     console.log("sucsess");
                 });
             }
