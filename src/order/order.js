@@ -1,28 +1,28 @@
-const express = require('express');
-const http = require('http');
-const axios = require('axios');
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('database.db');
-const app = express();
-const port = 5000;
+//import the require modules 
+const express = require('express');              //1)import express module for bulding servers
+const http = require('http');                    //2)import http module for http req
+const axios = require('axios');                  //3)import axios module for req also
+const sqlite3 = require('sqlite3').verbose();    //4)Import Sqlite3 module for database
+const db = new sqlite3.Database('database.db');  //create Sqlite3 database instance
+const app = express();                           //create express app
+const port = 5000;                               //the port for front end server is 5000
 
-let ordersql = `CREATE TABLE IF NOT EXISTS "order" (order_number INTEGER PRIMARY KEY, item_number)`;
-//db.run ("DROP TABLE 'order'");
-//console.log('droopppp');
+let ordersql = `CREATE TABLE IF NOT EXISTS "order" (order_number INTEGER PRIMARY KEY, item_number)`;   // sql query to create order table
 
-db.run(ordersql, (err) => {
+db.run(ordersql, (err) => {                                                                            //excute the query      
     if (err) {
-        console.error('Error in creating table:', err.message);
+        console.error('Error in creating table:', err.message);                                       //error handling
     } else {
         console.log('the order table created successfully');
     }
 });
 
-app.post('/purchase/:item_number', (req, res) => {
-    const itemNumber = req.params.item_number; 
 
-    const insertQuery = `INSERT INTO "order" (item_number) VALUES (?)`;
-    db.run(insertQuery, [itemNumber], (err) => {
+app.post('/purchase/:item_number', (req, res) => {                                                     //handle post req     
+    const item_numberr = req.params.item_number; 
+ 
+    const insert_query = `INSERT INTO "order" (item_number) VALUES (?)`;                               //insert order to the order table 
+    db.run(insert_query, [item_numberr], (err) => {                                                    //excute  the query
         if (err) {
             console.error('Error in inserting the data:', err.message);
         } else {
@@ -30,55 +30,51 @@ app.post('/purchase/:item_number', (req, res) => {
         }
     });
 
-    const selectQuery = `SELECT * FROM "order"`;
-    db.all(selectQuery, [], (err, rows) => {
+    const select_query = `SELECT * FROM "order"`;                                                       //query for select all order 
+    db.all(select_query, [], (err, rows) => {
         if (err) {
             console.error(' querying error:', err.message);
         } else {
-            console.log('table result:');
+            console.log('table result:');                                                              // print all orders 
             rows.forEach((row) => {
                 console.log(row);
             });
         }
     });
 
-    http.get('http://localhost:4000/info/' + req.params.item_number,(response)=>{
+    http.get('http://localhost:4000/info/' + req.params.item_number,(response)=>{                     //get http req to send it to catalog server
         var responseData='';
         response.on("data", (chunk)=>{
            responseData = JSON.parse(chunk);
-            res.json(responseData)
+           
         });
         response.on('end', () => {
             
-           console.log(responseData[0].Stock);
             if(responseData[0].Stock>0){
-                const updatedStock = responseData[0].Stock - 1;
-                const updatedData = { Stock: updatedStock }; // Assuming you're updating the stock
+                const updatedStock = responseData[0].Stock - 1;                                      //if the stock greater than 0 decrease the it by 1 
 
-                axios.put('http://localhost:4000/update/' + req.params.item_number, updatedData)
+                const updatedData = { Stock: updatedStock }; 
+
+                axios.put('http://localhost:4000/update/' + req.params.item_number, updatedData)     //http put req for update stock number
                     .then((response) => {
                         console.log("Success");
                     })
                     .catch((error) => {
                         console.error("Error:", error);
                     });
+                    res.json({ message: 'Purchase completed' });
 
             }
             else{
-                console.log("This item is sold out");
+                res.json({ message: 'Item is sold out' });
             }
-        });
-
-
+        });      
    
 });
-//res.send('Purchase completed');
-
 
 });
 
-app.listen(port, () => {
+app.listen(port, () => {                                                                            // start the order server on port 5000
     console.log('Server is running on port:', port);
 
 });
-
