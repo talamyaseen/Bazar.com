@@ -24,7 +24,14 @@ app.get('/info/:item_number',(req,res)=>{
 })
 
 app.put('/update/:item_number/',(req,res)=>{
-    DatabaseConfig.updateStock(req.params.stock,req.params.item_number)
+    stock = req.body.Stock;
+    DatabaseConfig.updateStock(stock,req.params.item_number, (err) => {
+        if (err) {
+            res.status(500).send('Error fetching data from database');
+        } else {
+            res.status(200).send('Updated');
+        }
+    });
 })
 
 app.listen(port,()=>{  
