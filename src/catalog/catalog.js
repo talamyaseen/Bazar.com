@@ -1,25 +1,33 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('data.db',sqlite3.OPEN_READWRITE,(err)=>{
-    if(err) 
-    return console.error(err.message);
-});
-let sql;
-sql = `CREATE TABLE catalog(ISBN INTEGER PRIMARY KEY,Title,Cost,Topic)`;
-//db.run(sql);
-//db.run ("DROP TABLE catalog");
-sql =`INSERT INTO catalog (Title,Cost,Topic) VALUES(?,?,?)`
-db.run(sql,["title",25,"topic"],(err)=>{
-    if(err) 
-    return console.error(err.message);
-})
-
-sql=`SELECT * FROM catalog`;
-db.all(sql,[],(err,rows)=>{
-    if(err)
-    return console.error(err.message);
-
-    rows.forEach((row) => {
-        console.log(row);
+const http =require('http');
+const DatabaseConfig = require('./DatabaseConfig');
+const app = express();
+const port= 4000;
+app.get('/search/:topic',(req,res)=>{
+    DatabaseConfig.searchTopic(req.params.topic, (err, data) => {
+        if (err) {
+            res.status(500).send('Error fetching data from database');
+        } else {
+            res.json(data);
+        }
     });
 })
+
+app.get('/info/:item_number',(req,res)=>{
+    DatabaseConfig.info(req.params.item_number, (err, data) => {
+        if (err) {
+            res.status(500).send('Error fetching data from database');
+        } else {
+            res.json(data);
+        }
+    });
+})
+
+app.put('/update/:item_number/',(req,res)=>{
+    DatabaseConfig.updateStock(req.params.stock,req.params.item_number)
+})
+
+app.listen(port,()=>{  
+    console.log("Catalog server is running at 4000");
+})
+

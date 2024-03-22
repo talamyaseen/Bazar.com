@@ -12,7 +12,7 @@ app.get('/search/:topic',(req,res)=>{
 })
 })
 app.get('/info/:item_number',(req,res)=>{
-    http.get('http://localhost:4000/search/'+req.params.item_number,(response)=>{
+    http.get('http://localhost:4000/info/'+req.params.item_number,(response)=>{
         response.on("data", (chunk)=>{
             const responseData = JSON.parse(chunk);
             res.json(responseData)
@@ -20,7 +20,7 @@ app.get('/info/:item_number',(req,res)=>{
 })
 })
 app.post('/purchase/:item_number',(req,res)=>{
-    http.get('http://localhost:5000/purchase/'+req.params.item_number,(response)=>{
+    http.post('http://localhost:5000/purchase/'+req.params.item_number,(response)=>{
         response.on("data", (chunk)=>{
             const responseData = JSON.parse(chunk);
             res.json(responseData)
@@ -30,4 +30,3 @@ app.post('/purchase/:item_number',(req,res)=>{
 app.listen(port,()=>{  
     console.log("Front end server is running at 3000");
 })
-
