@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const axios = require('axios');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('database.db');
 const app = express();
@@ -17,8 +18,10 @@ db.run(ordersql, (err) => {
     }
 });
 
-app.get('/purchase/:item_number', (req, res) => {
-    const itemNumber = parseInt(req.params.item_number); 
+app.post('/purchase/:item_number', (req, res) => {
+    
+    const itemNumber = req.params.item_number; 
+    console.log(itemNumber);
     const insertQuery = `INSERT INTO "order" (item_number) VALUES (?)`;
     db.run(insertQuery, [itemNumber], (err) => {
         if (err) {
@@ -39,3 +42,39 @@ app.get('/purchase/:item_number', (req, res) => {
             });
         }
     });
+
+
+    http.get('http://localhost:4000/info/' + req.params.item_number,(response)=>{
+        var responseData='';
+        response.on("data", (chunk)=>{
+           responseData = JSON.parse(chunk);
+            res.json(responseData)
+        });
+        response.on('end', () => {
+            
+           console.log(responseData[0].Stock);
+            if(responseData[0].Stock>0){
+                const updatedStock = responseData[0].Stock - 1;
+                const updatedData = { Stock: updatedStock }; // Assuming you're updating the stock
+
+                axios.put('http://localhost:4000/update/' + req.params.item_number, updatedData)
+                    .then((response) => {
+                        console.log("Success");
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+            }
+            else{
+                console.log("This item is sold out");
+            }
+        });
+
+   
+});
+//res.send('Purchase completed');
+});
+
+app.listen(port, () => {
+    console.log('Server is running on port:', port);
+});

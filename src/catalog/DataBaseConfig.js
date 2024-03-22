@@ -41,9 +41,13 @@ function info(ISBN, callback) {
 
 function updateStock(stock,ISBN,callback){
     sql=`UPDATE catalog SET Stock = ? where ISBN = ?`;
-    db.run(sql,[stock-1,ISBN],(err)=>{
-        if(err)  callback(err, null);
-        else console.error(err.message);
+    db.run(sql,[stock,ISBN],(err)=>{
+
+        if (err) {
+            callback(err, null);
+        } else {
+            console.log("Stock updated successfully");
+        }
     })
         
     }
