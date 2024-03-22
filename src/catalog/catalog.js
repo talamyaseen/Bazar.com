@@ -23,7 +23,7 @@ app.get('/info/:item_number',(req,res)=>{
     });
 })
 
-app.put('/update/:item_number/',(req,res)=>{
+app.put('/update/:item_number',(req,res)=>{
     stock = req.body.Stock;
     DatabaseConfig.updateStock(stock,req.params.item_number, (err) => {
         if (err) {
