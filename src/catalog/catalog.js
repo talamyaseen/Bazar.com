@@ -11,7 +11,9 @@ app.get('/search/:topic',(req,res)=>{                                           
         if (err) {
             res.status(500).send('Error fetching data from database');            //error handling
         } else {
-            res.json(data);                                                       
+            res.json(data);    
+            console.log('Fetched successfully');
+            console.log(data);
         }
     });
 })
@@ -21,6 +23,8 @@ app.get('/info/:item_number',(req,res)=>{                                       
         if (err) {
             res.status(500).send('Error fetching data from database');           //error handling
         } else {
+            console.log('Fetched successfully');
+            console.log(data);
             res.json(data);                                                      //if success send the data as a json
         }
     });
