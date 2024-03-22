@@ -45,7 +45,10 @@ app.post('/purchase/:item_number', (req, res) => {                              
     http.get('http://catalog:4000/info/' + req.params.item_number,(response)=>{                     //get http req to send it to catalog server
         var responseData='';
         response.on("data", (chunk)=>{
+          
            responseData = JSON.parse(chunk);
+           console.log('Fetched successfully');
+           console.log(responseData);
            
         });
         response.on('end', () => {
