@@ -3,6 +3,8 @@ const http =require('http');
 const DatabaseConfig = require('./DatabaseConfig');
 const app = express();
 const port= 4000;
+app.use(express.json());
+
 app.get('/search/:topic',(req,res)=>{
     DatabaseConfig.searchTopic(req.params.topic, (err, data) => {
         if (err) {
@@ -25,6 +27,7 @@ app.get('/info/:item_number',(req,res)=>{
 
 app.put('/update/:item_number',(req,res)=>{
     stock = req.body.Stock;
+    console.log( req.body.Stock);
     DatabaseConfig.updateStock(stock,req.params.item_number, (err) => {
         if (err) {
             res.status(500).send('Error fetching data from database');
