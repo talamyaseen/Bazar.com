@@ -42,7 +42,7 @@ app.post('/purchase/:item_number', (req, res) => {                              
         }
     });
 
-    http.get('http://localhost:4000/info/' + req.params.item_number,(response)=>{                     //get http req to send it to catalog server
+    http.get('http://catalog:4000/info/' + req.params.item_number,(response)=>{                     //get http req to send it to catalog server
         var responseData='';
         response.on("data", (chunk)=>{
            responseData = JSON.parse(chunk);
@@ -55,7 +55,7 @@ app.post('/purchase/:item_number', (req, res) => {                              
 
                 const updatedData = { Stock: updatedStock }; 
 
-                axios.put('http://localhost:4000/update/' + req.params.item_number, updatedData)     //http put req for update stock number
+                axios.put('http://catalog:4000/update/' + req.params.item_number, updatedData)     //http put req for update stock number
                     .then((response) => {
                         console.log("Success");
                     })
