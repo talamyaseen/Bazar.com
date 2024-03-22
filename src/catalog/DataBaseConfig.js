@@ -39,15 +39,16 @@ function info(ISBN, callback) {
     });
 }
 
-
-function updateStock(stock,ISBN){
+function updateStock(stock,ISBN,callback){
     sql=`UPDATE catalog SET Stock = ? where ISBN = ?`;
     db.run(sql,[stock-1,ISBN],(err)=>{
-        if(err)
-        return console.error(err.message);
+        if(err)  callback(err, null);
+        else console.error(err.message);
     })
         
     }
+
+
     
     module.exports = {
         createCatalogTable,

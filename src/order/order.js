@@ -39,28 +39,3 @@ app.get('/purchase/:item_number', (req, res) => {
             });
         }
     });
-
-
-    http.get('http://localhost:4000/purchase/'+req.params.item_number,(response)=>{
-        response.on("data", (chunk)=>{
-            const responseData = JSON.parse(chunk);
-            res.json(responseData)
-            
-            if(responseData.stock>=0){
-                const dec = responseData.stock -1;
-                app.put('/update/:item_number/:dec', (req, res) => {
-                    console.log("sucsess");
-                });
-            }
-            else{
-                console.log("This item is sold out");
-            }
-        });
-})
-
-    res.send('Purchase completed');
-});
-
-app.listen(port, () => {
-    console.log('Server is running on port:', port);
-});
