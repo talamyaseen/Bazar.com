@@ -19,9 +19,8 @@ db.run(ordersql, (err) => {
 });
 
 app.post('/purchase/:item_number', (req, res) => {
-    
     const itemNumber = req.params.item_number; 
-    console.log(itemNumber);
+
     const insertQuery = `INSERT INTO "order" (item_number) VALUES (?)`;
     db.run(insertQuery, [itemNumber], (err) => {
         if (err) {
@@ -43,7 +42,6 @@ app.post('/purchase/:item_number', (req, res) => {
         }
     });
 
-
     http.get('http://localhost:4000/info/' + req.params.item_number,(response)=>{
         var responseData='';
         response.on("data", (chunk)=>{
@@ -64,17 +62,23 @@ app.post('/purchase/:item_number', (req, res) => {
                     .catch((error) => {
                         console.error("Error:", error);
                     });
+
             }
             else{
                 console.log("This item is sold out");
             }
         });
 
+
    
 });
 //res.send('Purchase completed');
+
+
 });
 
 app.listen(port, () => {
     console.log('Server is running on port:', port);
+
 });
+
